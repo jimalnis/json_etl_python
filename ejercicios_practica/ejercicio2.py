@@ -13,6 +13,36 @@ import requests
 import matplotlib.pyplot as plt
 
 
+def extraer (url):
+    response= requests.get(url)
+    data= response.json()
+    return data
+
+def usuarios (data):
+    x= []
+    for i in data:
+        usuario= i["userId"]
+        if usuario not in x:
+            x.append(usuario)
+    return x
+
+def completos (data,lista):
+    y =[]
+    for h in lista:
+        completo  = [x for x in range (200) if (data[x].get("completed") == True and data[x].get("userId") == h)]
+        y.append(len(completo))
+    return y
+
+def graficar (x,y):
+    fig=plt.figure()
+    fig.suptitle ("Titulos completos por usuarios", fontsize=16)
+    ax= fig.add_subplot()
+    ax.bar(x,y)
+    ax.set_ylabel("Titulos Completos")
+    ax.set_xlabel("Usuario")
+    ax.legend()
+    plt.show()
+
 if __name__ == '__main__':
     print("Bienvenidos a otra clase de Inove con Python")
     
@@ -27,14 +57,21 @@ if __name__ == '__main__':
     # del userId=1 al userId=10
     # 3) En cada entrada se especifica si el usuario completó ese título,
     # mediante el campo "completed".
-
+    
+    #data=json.loads(response.text)
+    
+    #print(data)
 
     # Alumno, de cada usuario en el total de las 200 entradas
     # debe contar cuantos títulos completó cada usuario (de los 10 posibles)
     # y armar un gráfico de barras resumiendo la información.
     # gráfico en el eje "x" está cada uno de los 10 usuarios y en el eje
     # "y" la cantidad de títulos completados
-
+    
+    data= extraer(url)
+    
+    x= usuarios(data)
+    y= (completos(data,x))
     # Para poder ir haciendo esto debe ir almacenando la información
     # de cada usuario a medida que "itera" en un bucle los datos
     # del JSON recolectado. Al finalizar el bucle deberá tener la data
@@ -45,5 +82,5 @@ if __name__ == '__main__':
     # para imprimir cuantos títulos completó cada usuario
     # y verifique si los primeros usuarios (mirando la página a ojo)
     # los datos recolectados son correctos.
-
+    graficar(x,y)
     print("terminamos")
